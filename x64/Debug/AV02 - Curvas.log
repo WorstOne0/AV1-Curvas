@@ -1,5 +1,6 @@
-﻿  Curves.cpp
-  main.cpp
+﻿  main.cpp
+  Shader.cpp
+  VAO.cpp
   Gerando Código...
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflita com uso de outras bibliotecas; use /NODEFAULTLIB:library
-  AV02 - Curvas.vcxproj -> C:\Users\User\Desktop\Projects\CG\AV1-Curvas\x64\Debug\AV02 - Curvas.exe
+  AV02 - Curvas.vcxproj -> C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\x64\Debug\AV02 - Curvas.exe

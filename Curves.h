@@ -1,9 +1,10 @@
 #ifndef CURVES_H
 #define CURVES_H
 
+#include <GLFW/glfw3.h>
 #include<vector>
 
-class Form {
+class Curve {
 private:
 	std::vector<float> verticies;
 public:
@@ -14,18 +15,19 @@ public:
 	void addVerticies(float x, float y, float z);
 };
 
-class Program {
+class State {
 private:
-	std::vector<Form> Forms;
+	std::vector<Curve> Curves;
 public:
 	// Get Functions
-	std::vector<Form> getForms();
+	std::vector<Curve> getForms();
 
 	// Set Function
-	void addform(Form newForm);
+	void addCurve(Curve newCurve);
 
 	// OpenGL functiona
-	void processInput();
+	void processInput(GLFWwindow* window);
+	void draw();
 };
 
 #endif

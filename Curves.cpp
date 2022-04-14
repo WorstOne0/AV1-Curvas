@@ -1,11 +1,11 @@
 #include "Curves.h"
 
 // Form Class
-std::vector<float> Form::getVerticies() {
+std::vector<float> Curve::getVerticies() {
 	return this->verticies;
 };
 
-void Form::addVerticies(float x, float y, float z) {
+void Curve::addVerticies(float x, float y, float z) {
 	this->verticies.push_back(x);
 	this->verticies.push_back(y);
 	this->verticies.push_back(z);
@@ -13,6 +13,16 @@ void Form::addVerticies(float x, float y, float z) {
 
 
 // Program Class
-std::vector<Form> Program::getForms() {
-	return this->Forms;
+std::vector<Curve> State::getForms() {
+	return this->Curves;
+};
+
+void State::addCurve(Curve newCurve) {
+	
+};
+
+// Keyboard and Mouse Input
+void State::processInput(GLFWwindow* window) {
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
 };
