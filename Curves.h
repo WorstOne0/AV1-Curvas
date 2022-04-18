@@ -25,9 +25,9 @@ public:
 	// Set Function
 	void addCurve(Curve newCurve);
 
-	// OpenGL functiona
+	// OpenGL functions
 	void processInput(GLFWwindow* window);
-	void draw();
+	void drawCartesianPlane();
 };
 
 #endif

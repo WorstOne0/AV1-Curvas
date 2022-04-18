@@ -47,6 +47,13 @@ int main() {
      0.0f,  0.5f, 0.0f
     };
 
+    // Verticies
+    std::vector<float> verticesQ = {
+    -1.0f, -1.0f, 0.0f,
+     0.0f, -1.0f, 0.0f,
+     -1.0f,  0.0f, 0.0f
+    };
+
     // Generates Shader object using shaders defualt.vert and default.frag
     Shader shaderProgram("default.vert", "default.frag");
 
@@ -63,6 +70,23 @@ int main() {
     // Unbind all to prevent accidentally modifying them
     VAO1.Unbind();
     VBO1.Unbind();
+
+    // *** Second Object
+
+    // Generates Vertex Array Object and binds it
+    VAO VAO2;
+    VAO2.Bind();
+
+    // Generates Vertex Buffer Object and links it to vertices
+    VBO VBO2(verticesQ.data(), verticesQ.size() * sizeof(float));
+
+    // Links VBO to VAO
+    VAO2.LinkVBO(VBO2, 0);
+
+    // Unbind all to prevent accidentally modifying them
+    VAO2.Unbind();
+    VBO2.Unbind();
+    
     
     // Render loop
     while (!glfwWindowShouldClose(window)) {
@@ -80,6 +104,15 @@ int main() {
         // Draw the triangle using the GL_TRIANGLES primitive
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
+        VAO1.Unbind();
+
+        VAO2.Bind();
+
+        // Draw the triangle using the GL_TRIANGLES primitive
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        VAO2.Unbind();
+ 
         // Swap buffers and poll IO events
         glfwSwapBuffers(window);
         glfwPollEvents();

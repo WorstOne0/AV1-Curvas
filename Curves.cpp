@@ -26,3 +26,13 @@ void State::processInput(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 };
+
+void State::drawCartesianPlane() {
+	// Verticies
+	std::vector<float> vertices = {
+	1.0f, 0.0f, 0.0f,
+	-1.0f, 0.0f, 0.0f,
+	0.0f, 1.0f, 0.0f,
+	0.0f, -1.0f, 0.0f,
+	};
+}
