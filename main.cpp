@@ -31,7 +31,7 @@ int main() {
         return -1;
     }
     glfwMakeContextCurrent(window);
-
+    
     // Initialize GLEW
     glewInit();
 
@@ -49,7 +49,13 @@ int main() {
     appState.addVerticieToShape(0.0f, 0.5f, 0.0f);
 
     // Add the shape to the VAO
-    appState.addShapeToVAO();
+    appState.addShapeToVAO(GL_TRIANGLES);
+
+    appState.addVerticieToShape(0.0f, 1.0f, 0.0f);
+    appState.addVerticieToShape(-1.0f, 0.0f, 0.0f);
+
+    // Add the shape to the VAO
+    appState.addShapeToVAO(GL_LINES);
 
     // *** SECOND OBJECT
 
@@ -59,7 +65,7 @@ int main() {
     appState.addVerticieToShape(-1.0f, 0.0f, 0.0f);
 
     // Add the shape to the VAO
-    appState.addShapeToVAO();
+    appState.addShapeToVAO(GL_TRIANGLES);
 
     // Generates Shader object using shaders defualt.vert and default.frag
     Shader shaderProgram("default.vert", "default.frag");

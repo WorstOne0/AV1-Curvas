@@ -3,6 +3,7 @@
 
 #include "VAO.h"
 #include "VBO.h"
+#include <iostream>
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <string>
@@ -11,13 +12,15 @@
 class Shape {
 private:
 	std::vector<float> verticies;
-	std::string type;
+	GLenum type;
 public:
 	// Get Fuctions
 	std::vector<float> getVerticies();
+	GLenum getType();
 
 	// Set Functions
 	void addVerticies(float x, float y, float z);
+	void setType(GLenum type);
 	void clearData();
 };
 
@@ -33,8 +36,8 @@ public:
 	std::vector<Shape> getShapes();
 
 	// Set Function
-	void addShapeToVAO();
-	void addShape();
+	void addShapeToVAO(GLenum type);
+	void addShape(GLenum type);
 	void addVerticieToShape(float x, float y, float z);
 	void deleteVAOs();
 

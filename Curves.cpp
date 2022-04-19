@@ -5,11 +5,19 @@ std::vector<float> Shape::getVerticies() {
 	return this->verticies;
 };
 
+GLenum Shape::getType() {
+	return this->type;
+}
+
 void Shape::addVerticies(float x, float y, float z) {
 	this->verticies.push_back(x);
 	this->verticies.push_back(y);
 	this->verticies.push_back(z);
 };
+
+void Shape::setType(GLenum type) {
+	this->type = type;
+}
 
 void Shape::clearData() {
 	this->verticies.clear();
@@ -25,7 +33,9 @@ std::vector<Shape> State::getShapes() {
 	return this->Shapes;
 };
 
-void State::addShapeToVAO() {
+void State::addShapeToVAO(GLenum type) {
+	this->addShape(type);
+
 	// Generates Vertex Array Object and binds it
 	VAO VAO1;
 	VAO1.Bind();
@@ -48,9 +58,9 @@ void State::addShapeToVAO() {
 	this->newShape.clearData();
 };
 
-void State::addShape() {
+void State::addShape(GLenum type) {
+	this->newShape.setType(type);
 	this->Shapes.push_back(this->newShape);
-	this->newShape.clearData();
 };
 
 void State::addVerticieToShape(float x, float y, float z) {
@@ -65,10 +75,19 @@ void State::deleteVAOs() {
 
 // Keyboard and Mouse Input
 void State::processInput(GLFWwindow* window) {
+	double xpos = 0, ypos = 0;
+
+	int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+
+	if (state == GLFW_PRESS) {
+		glfwGetCursorPos(window, &xpos, &ypos);
+		std::cout << xpos << " " << ypos << "\n";
+	}
+
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 };
-
+	
 void State::drawCartesianPlane() {
 	// Verticies
 	std::vector<float> vertices = {
@@ -84,7 +103,7 @@ void State::drawFromVAO() {
 		this->VAOs[i].Bind();
 
 		// Draw the triangle using the GL_TRIANGLES primitive
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(this->Shapes[i].getType(), 0, this->Shapes[i].getVerticies().size());
 
 		this->VAOs[i].Unbind();
 	}
