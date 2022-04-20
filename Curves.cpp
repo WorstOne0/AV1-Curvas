@@ -91,11 +91,65 @@ void State::processInput(GLFWwindow* window) {
 void State::drawCartesianPlane() {
 	// Verticies
 	std::vector<float> vertices = {
-	1.0f, 0.0f, 0.0f,
-	-1.0f, 0.0f, 0.0f,
-	0.0f, 1.0f, 0.0f,
-	0.0f, -1.0f, 0.0f,
+	1.0f, 0.0f, 0.0f, // Positive X-axis
+	-1.0f, 0.0f, 0.0f, // Negative X-axis
+	0.0f, 1.0f, 0.0f, // Positive Y-axis
+	0.0f, -1.0f, 0.0f, // Negative Y-axis
 	};
+
+	for (float i = 0.1f; i < 1.0f; i += 0.1f) {
+		// Positive X-axis point 1
+		vertices.push_back(i);
+		vertices.push_back(0.01f);
+		vertices.push_back(0.0f);
+		// Positive X-axis point 2
+		vertices.push_back(i);
+		vertices.push_back(-0.01f);
+		vertices.push_back(0.0f);
+
+		// Negative X-axis point 1
+		vertices.push_back(-i);
+		vertices.push_back(0.01f);
+		vertices.push_back(0.0f);
+		// Negative X-axis point 2
+		vertices.push_back(-i);
+		vertices.push_back(-0.01f);
+		vertices.push_back(0.0f);
+
+		// Positive Y-axis point 1
+		vertices.push_back(0.01f);
+		vertices.push_back(i);
+		vertices.push_back(0.0f);
+		// Positive Y-axis point 2
+		vertices.push_back(-0.01f);
+		vertices.push_back(i);
+		vertices.push_back(0.0f);
+
+		// Negative Y-axis point 1
+		vertices.push_back(0.01f);
+		vertices.push_back(-i);
+		vertices.push_back(0.0f);
+		// Negative Y-axis point 2
+		vertices.push_back(-0.01f);
+		vertices.push_back(-i);
+		vertices.push_back(0.0f);
+	}
+
+	VAO VAO1;
+	VAO1.Bind();
+
+	// Generates Vertex Buffer Object and links it to vertices
+	VBO VBO1(vertices.data(), vertices.size() * sizeof(float));
+
+	// Links VBO to VAO
+	VAO1.LinkVBO(VBO1, 0);
+
+	glDrawArrays(GL_LINES, 0, vertices.size());
+
+	// Unbind all to prevent accidentally modifying them
+	VAO1.Unbind();
+	VBO1.Unbind();
+	VBO1.Delete();
 }
 
 void State::drawFromVAO() {

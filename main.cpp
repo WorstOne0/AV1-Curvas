@@ -40,13 +40,17 @@ int main() {
 
     // Controls the State
     State appState;
-
-    // *** FOR NOW ITS ALWAYS A TRIANGLE, SO IT CALLS 3 TIMES FOR EACH SHAPE
    
-    // Add each position x, y, z to the shape to be drawn
+    
+    // Draw a Quad with 2 triangles without indicies
+    // 1st Triangle 
     appState.addVerticieToShape(-0.5f, -0.5f, 0.0f);
     appState.addVerticieToShape(0.5f, -0.5f, 0.0f);
-    appState.addVerticieToShape(0.0f, 0.5f, 0.0f);
+    appState.addVerticieToShape(-0.5f, 0.5f, 0.0f);
+    // 2nd Trinagle
+    appState.addVerticieToShape(0.5f, 0.5f, 0.0f);
+    appState.addVerticieToShape(0.5f, -0.5f, 0.0f);
+    appState.addVerticieToShape(-0.5f, 0.5f, 0.0f);
 
     // Add the shape to the VAO
     appState.addShapeToVAO(GL_TRIANGLES);
@@ -57,7 +61,11 @@ int main() {
     // Add the shape to the VAO
     appState.addShapeToVAO(GL_LINES);
 
-    // *** SECOND OBJECT
+    glPointSize(40);
+    appState.addVerticieToShape(0.0f, 0.5f, 0.0f);
+
+    // Add the shape to the VAO
+    appState.addShapeToVAO(GL_POINTS);
 
     // Add each position x, y, z to the shape to be drawn
     appState.addVerticieToShape(-1.0f, -1.0f, 0.0f);
@@ -79,10 +87,13 @@ int main() {
         glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        appState.drawCartesianPlane();
+
         // Tell OpenGL which Shader Program we want to use
-        shaderProgram.Activate();
+        //shaderProgram.Activate();
         // Draw the shapes stored in the VAO
         appState.drawFromVAO();
+        
  
         // Swap buffers and poll IO events
         glfwSwapBuffers(window);
