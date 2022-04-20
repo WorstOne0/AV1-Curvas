@@ -42,9 +42,10 @@ public:
 	void deleteVAOs();
 
 	// OpenGL functions
-	void processInput(GLFWwindow* window);
+	void processInput(GLFWwindow* window, int height, int width);
 	void drawCartesianPlane();
 	void drawFromVAO();
+	void drawBezierCurve();
 };
 
 #endif

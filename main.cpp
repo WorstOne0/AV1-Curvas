@@ -40,8 +40,16 @@ int main() {
 
     // Controls the State
     State appState;
+
+    glPointSize(10);
+    appState.addVerticieToShape(0.0f, 0.0f, 0.0f);
+    appState.addVerticieToShape(0.4f, 0.8f, 0.0f);
+    appState.addVerticieToShape(0.8f, 0.4f, 0.0f);
+    appState.addVerticieToShape(1.0f, 1.0f, 0.0f);
+
+    appState.addShapeToVAO(GL_POINTS);
    
-    
+    /*
     // Draw a Quad with 2 triangles without indicies
     // 1st Triangle 
     appState.addVerticieToShape(-0.5f, -0.5f, 0.0f);
@@ -73,7 +81,7 @@ int main() {
     appState.addVerticieToShape(-1.0f, 0.0f, 0.0f);
 
     // Add the shape to the VAO
-    appState.addShapeToVAO(GL_TRIANGLES);
+    appState.addShapeToVAO(GL_TRIANGLES);*/
 
     // Generates Shader object using shaders defualt.vert and default.frag
     Shader shaderProgram("default.vert", "default.frag");
@@ -81,7 +89,7 @@ int main() {
     // Render loop
     while (!glfwWindowShouldClose(window)) {
         // Keyboard and Mouse Input
-        appState.processInput(window);
+        appState.processInput(window, SCR_HEIGHT, SCR_WIDTH);
 
         // Color of the background
         glClearColor(0.07f, 0.13f, 0.17f, 1.0f);

@@ -74,14 +74,17 @@ void State::deleteVAOs() {
 };
 
 // Keyboard and Mouse Input
-void State::processInput(GLFWwindow* window) {
+void State::processInput(GLFWwindow* window, int height, int width) {
 	double xpos = 0, ypos = 0;
 
 	int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
 
 	if (state == GLFW_PRESS) {
 		glfwGetCursorPos(window, &xpos, &ypos);
+		float x = -1.0f + 2 * xpos / width;
+		float y = +1.0f - 2 * ypos / height;
 		std::cout << xpos << " " << ypos << "\n";
+		std::cout << x << " " << y << "\n";
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -161,4 +164,28 @@ void State::drawFromVAO() {
 
 		this->VAOs[i].Unbind();
 	}
+}
+
+void State::drawBezierCurve() {
+	for (int i = 0; i < this->VAOs.size(); i++) {
+		this->VAOs[i].Bind();
+
+		// Draw the triangle using the GL_TRIANGLES primitive
+		glDrawArrays(this->Shapes[i].getType(), 0, this->Shapes[i].getVerticies().size());
+
+		this->VAOs[i].Unbind();
+	}
+}
+
+std::vector<float> decast(std::vector<float> control, int size, float t, int i) {
+
+
+	if (size == 0) {
+		return control[i];
+	}
+	else {
+
+		return (1 - t) * decast(control, r - 1, t, i) + t * decast(control, r - 1, t, i + 1);
+	}
+
 }
