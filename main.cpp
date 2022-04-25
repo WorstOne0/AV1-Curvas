@@ -42,46 +42,14 @@ int main() {
     State appState;
 
     glPointSize(10);
-    appState.addVerticieToShape(0.0f, 0.0f, 0.0f);
-    appState.addVerticieToShape(0.4f, 0.8f, 0.0f);
-    appState.addVerticieToShape(0.8f, 0.4f, 0.0f);
-    appState.addVerticieToShape(1.0f, 1.0f, 0.0f);
-
-    appState.addShapeToVAO(GL_POINTS);
-   
-    /*
-    // Draw a Quad with 2 triangles without indicies
-    // 1st Triangle 
-    appState.addVerticieToShape(-0.5f, -0.5f, 0.0f);
-    appState.addVerticieToShape(0.5f, -0.5f, 0.0f);
-    appState.addVerticieToShape(-0.5f, 0.5f, 0.0f);
-    // 2nd Trinagle
+    appState.addVerticieToShape(-0.1f, 0.5f, 0.0f);
+    appState.addVerticieToShape(0.2f, 0.7f, 0.0f);
     appState.addVerticieToShape(0.5f, 0.5f, 0.0f);
-    appState.addVerticieToShape(0.5f, -0.5f, 0.0f);
-    appState.addVerticieToShape(-0.5f, 0.5f, 0.0f);
-
-    // Add the shape to the VAO
-    appState.addShapeToVAO(GL_TRIANGLES);
-
-    appState.addVerticieToShape(0.0f, 1.0f, 0.0f);
-    appState.addVerticieToShape(-1.0f, 0.0f, 0.0f);
-
-    // Add the shape to the VAO
-    appState.addShapeToVAO(GL_LINES);
-
-    glPointSize(40);
-    appState.addVerticieToShape(0.0f, 0.5f, 0.0f);
-
-    // Add the shape to the VAO
+    appState.addVerticieToShape(0.7f, 0.9f, 0.0f);
+    
     appState.addShapeToVAO(GL_POINTS);
 
-    // Add each position x, y, z to the shape to be drawn
-    appState.addVerticieToShape(-1.0f, -1.0f, 0.0f);
-    appState.addVerticieToShape(0.0f, -1.0f, 0.0f);
-    appState.addVerticieToShape(-1.0f, 0.0f, 0.0f);
-
-    // Add the shape to the VAO
-    appState.addShapeToVAO(GL_TRIANGLES);*/
+    appState.drawBezierCurve(0);
 
     // Generates Shader object using shaders defualt.vert and default.frag
     Shader shaderProgram("default.vert", "default.frag");
@@ -102,7 +70,6 @@ int main() {
         // Draw the shapes stored in the VAO
         appState.drawFromVAO();
         
- 
         // Swap buffers and poll IO events
         glfwSwapBuffers(window);
         glfwPollEvents();

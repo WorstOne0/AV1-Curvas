@@ -1,5 +1,7 @@
 #include "Curves.h"
 
+float computeBinominal(int n, int k);
+
 // Form Class
 std::vector<float> Shape::getVerticies() {
 	return this->verticies;
@@ -50,8 +52,8 @@ void State::addShapeToVAO(GLenum type) {
 	this->VAOs.push_back(VAO1);
 
 	// Unbind all to prevent accidentally modifying them
-	VAO1.Unbind();
 	VBO1.Unbind();
+	VAO1.Unbind();
 	VBO1.Delete();
 
 	// Resets the new shape
@@ -166,26 +168,49 @@ void State::drawFromVAO() {
 	}
 }
 
-void State::drawBezierCurve() {
-	for (int i = 0; i < this->VAOs.size(); i++) {
-		this->VAOs[i].Bind();
+void State::drawBezierCurve(int index) {
+	std::vector<float> bezierCurve;
+	
+	int n = (this->Shapes[index].getVerticies().size() / 3) - 1;
 
-		// Draw the triangle using the GL_TRIANGLES primitive
-		glDrawArrays(this->Shapes[i].getType(), 0, this->Shapes[i].getVerticies().size());
+	std::cout << "n: " << n << std::endl;
 
-		this->VAOs[i].Unbind();
+	for (float t = 0.0f; t < 1.1f; t += 0.1f) {
+		float xPoint = 0.0f, yPoint = 0.0f;
+
+		for (int i = 0; i <= n; i++) {
+			xPoint += computeBinominal(n, i) * std::pow((1.0f - t), ((float)n - i)) * std::pow(t, i) * this->Shapes[0].getVerticies()[3 * i];
+			yPoint += computeBinominal(n, i) * std::pow((1.0f - t), ((float)n - i)) * std::pow(t, i) * this->Shapes[0].getVerticies()[(3 * i) + 1];
+			std::cout << " t= " << t << " i=" << i << " bCurveXt=" << xPoint << " = " << computeBinominal(n, i) << " * " << std::pow((1 - t), (n - i)) << " * " << std::pow(t, i) << " * " << this->Shapes[0].getVerticies()[3 * i] << std::endl;
+			std::cout << " t= " << t << " i=" << i << " bCurveYt=" << yPoint << " = " << computeBinominal(n, i) << " * " << std::pow((1 - t), (n - i)) << " * " << std::pow(t, i) << " * " << this->Shapes[0].getVerticies()[3 * i] << std::endl;
+		}
+
+		std::cout << xPoint << " " << yPoint << std::endl;
+
+		bezierCurve.push_back(xPoint);
+		bezierCurve.push_back(yPoint);
+		bezierCurve.push_back(0.0f);
 	}
+
+	for (int i = 0; i < bezierCurve.size() / 3; i++) {
+		this->addVerticieToShape(bezierCurve[3 * i], bezierCurve[(3 * i) + 1], bezierCurve[(3 * i) + 2]);
+	}
+
+	this->addShapeToVAO(GL_LINE_STRIP);
 }
 
-std::vector<float> decast(std::vector<float> control, int size, float t, int i) {
+float computeBinominal(int n, int k) {
 
+	float value = 1.0f;
 
-	if (size == 0) {
-		return control[i];
-	}
-	else {
+	for (int i = 1; i <= k; i++) {
 
-		return (1 - t) * decast(control, r - 1, t, i) + t * decast(control, r - 1, t, i + 1);
+		value = value * ((n + 1 - i) / i);
 	}
 
+	if (n == k) {
+		value = 1;
+	}
+
+	return value;
 }

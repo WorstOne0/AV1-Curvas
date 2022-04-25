@@ -45,7 +45,8 @@ public:
 	void processInput(GLFWwindow* window, int height, int width);
 	void drawCartesianPlane();
 	void drawFromVAO();
-	void drawBezierCurve();
+	void drawFromVAOBezier();
+	void drawBezierCurve(int index);
 };
 
 #endif
