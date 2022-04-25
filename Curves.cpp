@@ -11,10 +11,16 @@ GLenum Shape::getType() {
 	return this->type;
 }
 
-void Shape::addVerticies(float x, float y, float z) {
+void Shape::addVerticies(float x, float y, float z, float r, float b, float g) {
+	// Verticies
 	this->verticies.push_back(x);
 	this->verticies.push_back(y);
 	this->verticies.push_back(z);
+
+	// Colors
+	this->verticies.push_back(r);
+	this->verticies.push_back(g);
+	this->verticies.push_back(b);
 };
 
 void Shape::setType(GLenum type) {
@@ -46,7 +52,10 @@ void State::addPointToVAO(GLenum type) {
 	VBO VBO1(this->newShape.getVerticies().data(), this->newShape.getVerticies().size() * sizeof(float));
 
 	// Links VBO to VAO
-	VAO1.LinkVBO(VBO1, 0);
+	// Vertex
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+	// Color
+	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
 	// Adds the VAO to the list
 	this->pointVAO.push_back(VAO1);
@@ -72,7 +81,10 @@ void State::addCurveToVAO(GLenum type) {
 	VBO VBO1(this->newShape.getVerticies().data(), this->newShape.getVerticies().size() * sizeof(float));
 
 	// Links VBO to VAO
-	VAO1.LinkVBO(VBO1, 0);
+	// Vertex
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+	// Color
+	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
 	// Adds the VAO to the list
 	this->curveVAO.push_back(VAO1);
@@ -87,8 +99,8 @@ void State::addCurveToVAO(GLenum type) {
 	this->newShape.clearData();
 };
 
-void State::addVerticieToShape(float x, float y, float z) {
-	this->newShape.addVerticies(x, y, z);
+void State::addVerticieToShape(float x, float y, float z, float r, float b, float g) {
+	this->newShape.addVerticies(x, y, z, r, g, b);
 };
 
 void State::deleteVAOs() {
@@ -125,6 +137,12 @@ void State::keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 		// No points
 		if (ptrState->newShape.getVerticies().size() == 0) return;
 
+		// Min 3 points
+		if ((ptrState->newShape.getVerticies().size() / 6) < 3) {
+			std::cout << "Essa funcao precisa(na verdade nao precisa mais e o que ta sendo pedido) de 3 pontos";
+			return;
+		}
+
 		ptrState->addPointToVAO(GL_POINTS);
 		ptrState->computeBezierCurve(ptrState->Curves.size());
 	}
@@ -151,8 +169,17 @@ void State::mouseButtonCallback(GLFWwindow* window, int button, int action, int 
 			float x = -1.0f + 2 * xpos / width;
 			float y = +1.0f - 2 * ypos / height;
 
+			/*
+			if(ptrState->newShape.getVerticies().size() != 0) {
+				int index = (ptrState->newShape.getVerticies().size() / 6) - 1;
+				if (ptrState->newShape.getVerticies()[(6 * index)] == x && ptrState->newShape.getVerticies()[(6 * index) + 1] == y) {
+					std::cout << "O Ponto adiconado em (" << x << ", " << y << ") e repetido e sera descartado" << std::endl;
+					return;
+				}
+			}*/
+
 			std::cout << "Ponto adiconado em (" << x << ", " << y << ")" << std::endl;
-			ptrState->addVerticieToShape(x, y, 0.0f);
+			ptrState->addVerticieToShape(x, y, 0.0f, ptrState->colors[(3 * ptrState->Curves.size())], ptrState->colors[(3 * ptrState->Curves.size()) + 1], ptrState->colors[(3 * ptrState->Curves.size()) + 2]);
 		}
 	}
 }
@@ -160,10 +187,10 @@ void State::mouseButtonCallback(GLFWwindow* window, int button, int action, int 
 void State::drawCartesianPlane() {
 	// Verticies
 	std::vector<float> vertices = {
-	1.0f, 0.0f, 0.0f, // Positive X-axis
-	-1.0f, 0.0f, 0.0f, // Negative X-axis
-	0.0f, 1.0f, 0.0f, // Positive Y-axis
-	0.0f, -1.0f, 0.0f, // Negative Y-axis
+	1.0f, 0.0f, 0.0f,     0.0f, 0.0f, 0.0f, // Positive X-axis
+	-1.0f, 0.0f, 0.0f,    0.0f, 0.0f, 0.0f, // Negative X-axis
+	0.0f, 1.0f, 0.0f,     0.0f, 0.0f, 0.0f, // Positive Y-axis
+	0.0f, -1.0f, 0.0f,    0.0f, 0.0f, 0.0f, // Negative Y-axis
 	};
 
 	for (float i = 0.1f; i < 1.0f; i += 0.1f) {
@@ -171,36 +198,72 @@ void State::drawCartesianPlane() {
 		vertices.push_back(i);
 		vertices.push_back(0.01f);
 		vertices.push_back(0.0f);
+
+		vertices.push_back(0.0f);
+		vertices.push_back(0.0f);
+		vertices.push_back(0.0f);
+
 		// Positive X-axis point 2
 		vertices.push_back(i);
 		vertices.push_back(-0.01f);
+		vertices.push_back(0.0f);
+
+		vertices.push_back(0.0f);
+		vertices.push_back(0.0f);
 		vertices.push_back(0.0f);
 
 		// Negative X-axis point 1
 		vertices.push_back(-i);
 		vertices.push_back(0.01f);
 		vertices.push_back(0.0f);
+
+		vertices.push_back(0.0f);
+		vertices.push_back(0.0f);
+		vertices.push_back(0.0f);
+
 		// Negative X-axis point 2
 		vertices.push_back(-i);
 		vertices.push_back(-0.01f);
+		vertices.push_back(0.0f);
+
+		vertices.push_back(0.0f);
+		vertices.push_back(0.0f);
 		vertices.push_back(0.0f);
 
 		// Positive Y-axis point 1
 		vertices.push_back(0.01f);
 		vertices.push_back(i);
 		vertices.push_back(0.0f);
+
+		vertices.push_back(0.0f);
+		vertices.push_back(0.0f);
+		vertices.push_back(0.0f);
+
 		// Positive Y-axis point 2
 		vertices.push_back(-0.01f);
 		vertices.push_back(i);
+		vertices.push_back(0.0f);
+
+		vertices.push_back(0.0f);
+		vertices.push_back(0.0f);
 		vertices.push_back(0.0f);
 
 		// Negative Y-axis point 1
 		vertices.push_back(0.01f);
 		vertices.push_back(-i);
 		vertices.push_back(0.0f);
+
+		vertices.push_back(0.0f);
+		vertices.push_back(0.0f);
+		vertices.push_back(0.0f);
+
 		// Negative Y-axis point 2
 		vertices.push_back(-0.01f);
 		vertices.push_back(-i);
+		vertices.push_back(0.0f);
+
+		vertices.push_back(0.0f);
+		vertices.push_back(0.0f);
 		vertices.push_back(0.0f);
 	}
 
@@ -211,9 +274,12 @@ void State::drawCartesianPlane() {
 	VBO VBO1(vertices.data(), vertices.size() * sizeof(float));
 
 	// Links VBO to VAO
-	VAO1.LinkVBO(VBO1, 0);
+	// Vertex
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+	// Color
+	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
-	glDrawArrays(GL_LINES, 0, vertices.size());
+	glDrawArrays(GL_LINES, 0, vertices.size() / 6);
 
 	// Unbind all to prevent accidentally modifying them
 	VAO1.Unbind();
@@ -225,7 +291,7 @@ void State::drawFromPointVAO() {
 	for (int i = 0; i < this->pointVAO.size(); i++) {
 		this->pointVAO[i].Bind();
 
-		glDrawArrays(this->Points[i].getType(), 0, this->Points[i].getVerticies().size() / 3);
+		glDrawArrays(this->Points[i].getType(), 0, this->Points[i].getVerticies().size() / 6);
 		//glDrawArrays(GL_LINE_STRIP, 0, this->Points[i].getVerticies().size() / 3);
 
 		this->pointVAO[i].Unbind();
@@ -236,7 +302,7 @@ void State::drawFromCurveVAO() {
 	for (int i = 0; i < this->curveVAO.size(); i++) {
 		this->curveVAO[i].Bind();
 
-		glDrawArrays(this->Curves[i].getType(), 0, this->Curves[i].getVerticies().size() / 3);
+		glDrawArrays(this->Curves[i].getType(), 0, this->Curves[i].getVerticies().size() / 6);
 
 		this->curveVAO[i].Unbind();
 	}
@@ -245,14 +311,14 @@ void State::drawFromCurveVAO() {
 void State::computeBezierCurve(int index) {
 	std::vector<float> bezierCurve;
 	
-	int n = (this->Points[index].getVerticies().size() / 3) - 1;
+	int n = (this->Points[index].getVerticies().size() / 6) - 1;
 
 	for (float t = 0.0f; t < 1.0f; t += 0.01f) {
 		float xPoint = 0.0f, yPoint = 0.0f;
 
 		for (int i = 0; i <= n; i++) {
-			xPoint += computeBinominal(n, i) * std::pow((1.0f - t), ((float)n - i)) * std::pow(t, i) * this->Points[index].getVerticies()[3 * i];
-			yPoint += computeBinominal(n, i) * std::pow((1.0f - t), ((float)n - i)) * std::pow(t, i) * this->Points[index].getVerticies()[(3 * i) + 1];
+			xPoint += computeBinominal(n, i) * std::pow((1.0f - t), ((float)n - i)) * std::pow(t, i) * this->Points[index].getVerticies()[6 * i];
+			yPoint += computeBinominal(n, i) * std::pow((1.0f - t), ((float)n - i)) * std::pow(t, i) * this->Points[index].getVerticies()[(6 * i) + 1];
 			//std::cout << " t= " << t << " i=" << i << " bCurveXt=" << xPoint << " = " << computeBinominal(n, i) << " * " << std::pow((1 - t), (n - i)) << " * " << std::pow(t, i) << " * " << this->Points[index].getVerticies()[3 * i] << std::endl;
 			//std::cout << " t= " << t << " i=" << i << " bCurveYt=" << yPoint << " = " << computeBinominal(n, i) << " * " << std::pow((1 - t), (n - i)) << " * " << std::pow(t, i) << " * " << this->Points[index].getVerticies()[3 * i] << std::endl;
 		}
@@ -265,7 +331,7 @@ void State::computeBezierCurve(int index) {
 	}
 
 	for (int i = 0; i < bezierCurve.size() / 3; i++) {
-		this->addVerticieToShape(bezierCurve[3 * i], bezierCurve[(3 * i) + 1], bezierCurve[(3 * i) + 2]);
+		this->addVerticieToShape(bezierCurve[3 * i], bezierCurve[(3 * i) + 1], bezierCurve[(3 * i) + 2], this->colors[(3 * this->Curves.size())], this->colors[(3 * this->Curves.size()) + 1], this->colors[(3 * this->Curves.size()) + 2]);
 	}
 
 	this->addCurveToVAO(GL_LINE_STRIP);

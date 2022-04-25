@@ -1,11 +1,12 @@
 ﻿  Curves.cpp
-C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(129,55): warning C4267: 'argumento': conversão de 'size_t' para 'int', possível perda de dados
-C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(151,12): warning C4244: 'inicializando': conversão de 'double' para 'float', possível perda de dados
-C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(152,12): warning C4244: 'inicializando': conversão de 'double' para 'float', possível perda de dados
-C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(216,43): warning C4267: 'argumento': conversão de 'size_t' para 'GLsizei', possível perda de dados
-C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(228,87): warning C4267: 'argumento': conversão de 'size_t' para 'GLsizei', possível perda de dados
-C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(239,87): warning C4267: 'argumento': conversão de 'size_t' para 'GLsizei', possível perda de dados
-C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(248,61): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
-C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(254,93): warning C4244: '+=': conversão de 'double' para 'float', possível perda de dados
-C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(255,93): warning C4244: '+=': conversão de 'double' para 'float', possível perda de dados
+C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(147,55): warning C4267: 'argumento': conversão de 'size_t' para 'int', possível perda de dados
+C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(169,12): warning C4244: 'inicializando': conversão de 'double' para 'float', possível perda de dados
+C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(170,12): warning C4244: 'inicializando': conversão de 'double' para 'float', possível perda de dados
+C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(282,47): warning C4267: 'argumento': conversão de 'size_t' para 'GLsizei', possível perda de dados
+C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(294,87): warning C4267: 'argumento': conversão de 'size_t' para 'GLsizei', possível perda de dados
+C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(305,87): warning C4267: 'argumento': conversão de 'size_t' para 'GLsizei', possível perda de dados
+C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(314,61): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
+C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(320,93): warning C4244: '+=': conversão de 'double' para 'float', possível perda de dados
+C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\Curves.cpp(321,93): warning C4244: '+=': conversão de 'double' para 'float', possível perda de dados
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflita com uso de outras bibliotecas; use /NODEFAULTLIB:library
   AV02 - Curvas.vcxproj -> C:\Users\lucca\Desktop\Faculdade\2022-1\Computação Grafica\AV02 - Curvas\x64\Debug\AV02 - Curvas.exe

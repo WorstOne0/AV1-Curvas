@@ -8,11 +8,6 @@
 #include <vector>
 #include <string>
 
-float colors[] = { 
-	0.0f, 0.0f, 0.0f, // Black
-	1.0f, 1.0f, 1.0f, // White
-};
-
 class Shape {
 private:
 	std::vector<float> verticies;
@@ -23,7 +18,7 @@ public:
 	GLenum getType();
 
 	// Set Functions
-	void addVerticies(float x, float y, float z);
+	void addVerticies(float x, float y, float z, float r, float b, float g);
 	void setType(GLenum type);
 	void clearData();
 };
@@ -36,6 +31,17 @@ private:
 
 public:
 	bool drawPoints = true, isMouse = true;
+	std::vector<float> colors = {
+		0.0f, 0.0f, 0.0f, // Black
+		1.0f, 1.0f, 1.0f, // White
+		0.482f, 0.803f, 0.729f,
+		0.607f, 0.494f, 0.870f,
+		0.611f, 0.686f, 0.717f,
+		0.309f, 0.615f, 0.411f,
+		0.976f, 0.439f, 0.407f,
+		0.819f, 0.839f, 0.274f,
+		0.341f, 0.768f, 0.898f
+	};
 
 	// Get Functions
 	std::vector<Shape> getPoints();
@@ -44,7 +50,7 @@ public:
 	// Set Function
 	void addPointToVAO(GLenum type);
 	void addCurveToVAO(GLenum type);
-	void addVerticieToShape(float x, float y, float z);
+	void addVerticieToShape(float x, float y, float z, float r, float b, float g);
 	void deleteVAOs();
 
 	// OpenGL functions
@@ -56,5 +62,19 @@ public:
 	void drawFromCurveVAO();
 	void computeBezierCurve(int index);
 };
+
+/*
+Cores
+
+  0,   0,   0 - 0.0f, 0.0f, 0.0f
+255, 255, 255 - 1.0f, 1.0f, 1.0f
+123, 205, 186 - 0.482f, 0.803f, 0.729f
+155, 126, 222 - 0.607f, 0.494f, 0.870f
+156, 175, 183 - 0.611f, 0.686f, 0.717f
+ 79, 157, 105 - 0.309f, 0.615f, 0.411f
+249, 112, 104 - 0.976f, 0.439f, 0.407f
+209, 214,  70 - 0.819f, 0.839f, 0.274f
+ 87, 196, 229 - 0.341f, 0.768f, 0.898f
+*/
 
 #endif

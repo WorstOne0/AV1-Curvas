@@ -58,7 +58,7 @@ int main() {
         appState.drawCartesianPlane();
 
         // Tell OpenGL which Shader Program we want to use
-        //shaderProgram.Activate();
+        shaderProgram.Activate();
         // Draw the shapes stored in the VAO
         if(appState.drawPoints) appState.drawFromPointVAO();
         appState.drawFromCurveVAO();
