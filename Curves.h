@@ -26,27 +26,29 @@ public:
 
 class State {
 private:
-	std::vector<VAO> VAOs;
-	std::vector<Shape> Shapes;
+	std::vector<VAO> pointVAO, curveVAO;
+	std::vector<Shape> Points, Curves;
 	Shape newShape;
 
 public:
 	// Get Functions
-	std::vector<VAO> getVAOs();
-	std::vector<Shape> getShapes();
+	std::vector<Shape> getPoints();
+	std::vector<Shape> getCurves();
 
 	// Set Function
-	void addShapeToVAO(GLenum type);
-	void addShape(GLenum type);
+	void addPointToVAO(GLenum type);
+	void addCurveToVAO(GLenum type);
 	void addVerticieToShape(float x, float y, float z);
 	void deleteVAOs();
 
 	// OpenGL functions
-	void processInput(GLFWwindow* window, int height, int width);
+	void configureWindow(GLFWwindow* window);
+	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 	void drawCartesianPlane();
-	void drawFromVAO();
-	void drawFromVAOBezier();
-	void drawBezierCurve(int index);
+	void drawFromPointVAO();
+	void drawFromCurveVAO();
+	void computeBezierCurve(int index);
 };
 
 #endif

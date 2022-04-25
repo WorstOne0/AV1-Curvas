@@ -27,16 +27,16 @@ void Shape::clearData() {
 
 
 // Program Class
-std::vector<VAO> State::getVAOs() {
-	return this->VAOs;
+std::vector<Shape> State::getPoints() {
+	return this->Points;
 };
 
-std::vector<Shape> State::getShapes() {
-	return this->Shapes;
+std::vector<Shape> State::getCurves() {
+	return this->Curves;
 };
 
-void State::addShapeToVAO(GLenum type) {
-	this->addShape(type);
+void State::addPointToVAO(GLenum type) {
+	this->newShape.setType(type);
 
 	// Generates Vertex Array Object and binds it
 	VAO VAO1;
@@ -49,20 +49,42 @@ void State::addShapeToVAO(GLenum type) {
 	VAO1.LinkVBO(VBO1, 0);
 
 	// Adds the VAO to the list
-	this->VAOs.push_back(VAO1);
+	this->pointVAO.push_back(VAO1);
 
 	// Unbind all to prevent accidentally modifying them
 	VBO1.Unbind();
 	VAO1.Unbind();
 	VBO1.Delete();
 
+	this->Points.push_back(this->newShape);
 	// Resets the new shape
 	this->newShape.clearData();
 };
 
-void State::addShape(GLenum type) {
+void State::addCurveToVAO(GLenum type) {
 	this->newShape.setType(type);
-	this->Shapes.push_back(this->newShape);
+
+	// Generates Vertex Array Object and binds it
+	VAO VAO1;
+	VAO1.Bind();
+
+	// Generates Vertex Buffer Object and links it to vertices
+	VBO VBO1(this->newShape.getVerticies().data(), this->newShape.getVerticies().size() * sizeof(float));
+
+	// Links VBO to VAO
+	VAO1.LinkVBO(VBO1, 0);
+
+	// Adds the VAO to the list
+	this->curveVAO.push_back(VAO1);
+
+	// Unbind all to prevent accidentally modifying them
+	VBO1.Unbind();
+	VAO1.Unbind();
+	VBO1.Delete();
+
+	this->Curves.push_back(this->newShape);
+	// Resets the new shape
+	this->newShape.clearData();
 };
 
 void State::addVerticieToShape(float x, float y, float z) {
@@ -70,13 +92,55 @@ void State::addVerticieToShape(float x, float y, float z) {
 };
 
 void State::deleteVAOs() {
-	for (int i = 0; i < this->VAOs.size(); i++) {
-		this->VAOs[i].Delete();
+	for (int i = 0; i < this->pointVAO.size(); i++) {
+		this->pointVAO[i].Delete();
+	}
+
+	for (int i = 0; i < this->curveVAO.size(); i++) {
+		this->curveVAO[i].Delete();
 	}
 };
 
 // Keyboard and Mouse Input
-void State::processInput(GLFWwindow* window, int height, int width) {
+
+// Configure the window to be possible to use class functions as callbacks
+void State::configureWindow(GLFWwindow* window) {
+	glfwSetKeyCallback(window, keyCallback);
+	glfwSetMouseButtonCallback(window, mouseButtonCallback);
+
+	glfwSetWindowUserPointer(window, this);
+}
+
+void State::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	State* ptrState = static_cast<State*>(glfwGetWindowUserPointer(window));
+
+	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+		ptrState->addPointToVAO(GL_POINTS);
+		ptrState->computeBezierCurve(ptrState->Curves.size());
+	}
+		
+
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+}
+
+void State::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+	State* ptrState = static_cast<State*>(glfwGetWindowUserPointer(window));
+
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		int width, height;
+		double xpos = 0, ypos = 0;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		glfwGetWindowSize(window, &width, &height);
+
+		float x = -1.0f + 2 * xpos / width;
+		float y = +1.0f - 2 * ypos / height;
+
+		std::cout << x << " " << y << "\n";
+		ptrState->addVerticieToShape(x, y, 0.0f);
+	}
+}
+/*void State::processInput(GLFWwindow* window, int height, int width) {
 	double xpos = 0, ypos = 0;
 
 	int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
@@ -89,9 +153,12 @@ void State::processInput(GLFWwindow* window, int height, int width) {
 		std::cout << x << " " << y << "\n";
 	}
 
+	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
+		std::cout << "Enter" << std::endl;
+
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-};
+};*/
 	
 void State::drawCartesianPlane() {
 	// Verticies
@@ -157,35 +224,42 @@ void State::drawCartesianPlane() {
 	VBO1.Delete();
 }
 
-void State::drawFromVAO() {
-	for (int i = 0; i < this->VAOs.size(); i++) {
-		this->VAOs[i].Bind();
+void State::drawFromPointVAO() {
+	for (int i = 0; i < this->pointVAO.size(); i++) {
+		this->pointVAO[i].Bind();
 
-		// Draw the triangle using the GL_TRIANGLES primitive
-		glDrawArrays(this->Shapes[i].getType(), 0, this->Shapes[i].getVerticies().size());
+		glDrawArrays(this->Points[i].getType(), 0, this->Points[i].getVerticies().size() / 3);
 
-		this->VAOs[i].Unbind();
+		this->pointVAO[i].Unbind();
 	}
 }
 
-void State::drawBezierCurve(int index) {
+void State::drawFromCurveVAO() {
+	for (int i = 0; i < this->curveVAO.size(); i++) {
+		this->curveVAO[i].Bind();
+
+		glDrawArrays(this->Curves[i].getType(), 0, this->Curves[i].getVerticies().size() / 3);
+
+		this->curveVAO[i].Unbind();
+	}
+}
+
+void State::computeBezierCurve(int index) {
 	std::vector<float> bezierCurve;
 	
-	int n = (this->Shapes[index].getVerticies().size() / 3) - 1;
+	int n = (this->Points[index].getVerticies().size() / 3) - 1;
 
-	std::cout << "n: " << n << std::endl;
-
-	for (float t = 0.0f; t < 1.1f; t += 0.1f) {
+	for (float t = 0.0f; t < 1.01f; t += 0.01f) {
 		float xPoint = 0.0f, yPoint = 0.0f;
 
 		for (int i = 0; i <= n; i++) {
-			xPoint += computeBinominal(n, i) * std::pow((1.0f - t), ((float)n - i)) * std::pow(t, i) * this->Shapes[0].getVerticies()[3 * i];
-			yPoint += computeBinominal(n, i) * std::pow((1.0f - t), ((float)n - i)) * std::pow(t, i) * this->Shapes[0].getVerticies()[(3 * i) + 1];
-			std::cout << " t= " << t << " i=" << i << " bCurveXt=" << xPoint << " = " << computeBinominal(n, i) << " * " << std::pow((1 - t), (n - i)) << " * " << std::pow(t, i) << " * " << this->Shapes[0].getVerticies()[3 * i] << std::endl;
-			std::cout << " t= " << t << " i=" << i << " bCurveYt=" << yPoint << " = " << computeBinominal(n, i) << " * " << std::pow((1 - t), (n - i)) << " * " << std::pow(t, i) << " * " << this->Shapes[0].getVerticies()[3 * i] << std::endl;
+			xPoint += computeBinominal(n, i) * std::pow((1.0f - t), ((float)n - i)) * std::pow(t, i) * this->Points[index].getVerticies()[3 * i];
+			yPoint += computeBinominal(n, i) * std::pow((1.0f - t), ((float)n - i)) * std::pow(t, i) * this->Points[index].getVerticies()[(3 * i) + 1];
+			//std::cout << " t= " << t << " i=" << i << " bCurveXt=" << xPoint << " = " << computeBinominal(n, i) << " * " << std::pow((1 - t), (n - i)) << " * " << std::pow(t, i) << " * " << this->Points[index].getVerticies()[3 * i] << std::endl;
+			//std::cout << " t= " << t << " i=" << i << " bCurveYt=" << yPoint << " = " << computeBinominal(n, i) << " * " << std::pow((1 - t), (n - i)) << " * " << std::pow(t, i) << " * " << this->Points[index].getVerticies()[3 * i] << std::endl;
 		}
 
-		std::cout << xPoint << " " << yPoint << std::endl;
+		//std::cout << xPoint << " " << yPoint << std::endl;
 
 		bezierCurve.push_back(xPoint);
 		bezierCurve.push_back(yPoint);
@@ -196,7 +270,9 @@ void State::drawBezierCurve(int index) {
 		this->addVerticieToShape(bezierCurve[3 * i], bezierCurve[(3 * i) + 1], bezierCurve[(3 * i) + 2]);
 	}
 
-	this->addShapeToVAO(GL_LINE_STRIP);
+	this->addCurveToVAO(GL_LINE_STRIP);
+
+	bezierCurve.clear();
 }
 
 float computeBinominal(int n, int k) {

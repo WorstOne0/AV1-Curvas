@@ -9,10 +9,10 @@
 #include "VAO.h"
 #include "VBO.h"
 
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 int main() {
     // Initial settings
@@ -23,6 +23,9 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    // Controls the State
+    State appState;
+
     // Window creation
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "AV1 - Curvas", NULL, NULL);
     if (!window) {
@@ -31,6 +34,8 @@ int main() {
         return -1;
     }
     glfwMakeContextCurrent(window);
+
+    appState.configureWindow(window);
     
     // Initialize GLEW
     glewInit();
@@ -38,18 +43,24 @@ int main() {
     // Specify the viewport of OpenGL in the Window
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
-    // Controls the State
-    State appState;
-
-    glPointSize(10);
-    appState.addVerticieToShape(-0.1f, 0.5f, 0.0f);
+    glPointSize(8);
+    /*appState.addVerticieToShape(-0.1f, 0.5f, 0.0f);
     appState.addVerticieToShape(0.2f, 0.7f, 0.0f);
     appState.addVerticieToShape(0.5f, 0.5f, 0.0f);
     appState.addVerticieToShape(0.7f, 0.9f, 0.0f);
-    
-    appState.addShapeToVAO(GL_POINTS);
 
-    appState.drawBezierCurve(0);
+    appState.addPointToVAO(GL_POINTS);
+
+    appState.computeBezierCurve(0);
+
+    appState.addVerticieToShape(-0.1f, -0.5f, 0.0f);
+    appState.addVerticieToShape(0.2f, -0.7f, 0.0f);
+    appState.addVerticieToShape(0.5f, -0.5f, 0.0f);
+    appState.addVerticieToShape(0.7f, -0.9f, 0.0f);
+
+    appState.addPointToVAO(GL_POINTS);
+
+    appState.computeBezierCurve(1);*/
 
     // Generates Shader object using shaders defualt.vert and default.frag
     Shader shaderProgram("default.vert", "default.frag");
@@ -57,7 +68,7 @@ int main() {
     // Render loop
     while (!glfwWindowShouldClose(window)) {
         // Keyboard and Mouse Input
-        appState.processInput(window, SCR_HEIGHT, SCR_WIDTH);
+        //appState.processInput(window, SCR_HEIGHT, SCR_WIDTH);
 
         // Color of the background
         glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
@@ -68,7 +79,8 @@ int main() {
         // Tell OpenGL which Shader Program we want to use
         //shaderProgram.Activate();
         // Draw the shapes stored in the VAO
-        appState.drawFromVAO();
+        appState.drawFromPointVAO();
+        appState.drawFromCurveVAO();
         
         // Swap buffers and poll IO events
         glfwSwapBuffers(window);
@@ -85,6 +97,26 @@ int main() {
     glfwTerminate();
     return 0;
 }
+
+/*void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
+        std::cout << "Enter" << std::endl;
+
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
+
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        int width, height;
+        double xpos = 0, ypos = 0;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        glfwGetWindowSize(window, &width, &height);
+
+        float x = -1.0f + 2 * xpos / width;
+        float y = +1.0f - 2 * ypos / height;
+    }
+}*/
 
 // Resize window
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
