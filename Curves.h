@@ -8,6 +8,10 @@
 #include <vector>
 #include <string>
 
+float colors[] = { 
+	0.0f, 0.0f, 0.0f, // Black
+	1.0f, 1.0f, 1.0f, // White
+};
 
 class Shape {
 private:
@@ -31,6 +35,8 @@ private:
 	Shape newShape;
 
 public:
+	bool drawPoints = true, isMouse = true;
+
 	// Get Functions
 	std::vector<Shape> getPoints();
 	std::vector<Shape> getCurves();

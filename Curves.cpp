@@ -114,12 +114,21 @@ void State::configureWindow(GLFWwindow* window) {
 void State::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	State* ptrState = static_cast<State*>(glfwGetWindowUserPointer(window));
 
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		std::string frase = ptrState->isMouse ? "Teclado" : "Mouse";
+
+		ptrState->isMouse = !ptrState->isMouse;
+		std::cout << "O Modo de input agora e pelo " << frase << std::endl;
+	}
+
 	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+		// No points
+		if (ptrState->newShape.getVerticies().size() == 0) return;
+
 		ptrState->addPointToVAO(GL_POINTS);
 		ptrState->computeBezierCurve(ptrState->Curves.size());
 	}
 		
-
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 }
@@ -127,38 +136,26 @@ void State::keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 void State::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
 	State* ptrState = static_cast<State*>(glfwGetWindowUserPointer(window));
 
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		int width, height;
-		double xpos = 0, ypos = 0;
-		glfwGetCursorPos(window, &xpos, &ypos);
-		glfwGetWindowSize(window, &width, &height);
+	if (ptrState->isMouse) {
+		if (ptrState->Curves.size() == 9) {
+			std::cout << "Limite maximo de curvas atingido" << std::endl;
+			return;
+		}
 
-		float x = -1.0f + 2 * xpos / width;
-		float y = +1.0f - 2 * ypos / height;
+		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+			int width, height;
+			double xpos = 0, ypos = 0;
+			glfwGetCursorPos(window, &xpos, &ypos);
+			glfwGetWindowSize(window, &width, &height);
 
-		std::cout << x << " " << y << "\n";
-		ptrState->addVerticieToShape(x, y, 0.0f);
+			float x = -1.0f + 2 * xpos / width;
+			float y = +1.0f - 2 * ypos / height;
+
+			std::cout << "Ponto adiconado em (" << x << ", " << y << ")" << std::endl;
+			ptrState->addVerticieToShape(x, y, 0.0f);
+		}
 	}
 }
-/*void State::processInput(GLFWwindow* window, int height, int width) {
-	double xpos = 0, ypos = 0;
-
-	int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-
-	if (state == GLFW_PRESS) {
-		glfwGetCursorPos(window, &xpos, &ypos);
-		float x = -1.0f + 2 * xpos / width;
-		float y = +1.0f - 2 * ypos / height;
-		std::cout << xpos << " " << ypos << "\n";
-		std::cout << x << " " << y << "\n";
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
-		std::cout << "Enter" << std::endl;
-
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-};*/
 	
 void State::drawCartesianPlane() {
 	// Verticies
@@ -229,6 +226,7 @@ void State::drawFromPointVAO() {
 		this->pointVAO[i].Bind();
 
 		glDrawArrays(this->Points[i].getType(), 0, this->Points[i].getVerticies().size() / 3);
+		//glDrawArrays(GL_LINE_STRIP, 0, this->Points[i].getVerticies().size() / 3);
 
 		this->pointVAO[i].Unbind();
 	}
@@ -249,7 +247,7 @@ void State::computeBezierCurve(int index) {
 	
 	int n = (this->Points[index].getVerticies().size() / 3) - 1;
 
-	for (float t = 0.0f; t < 1.01f; t += 0.01f) {
+	for (float t = 0.0f; t < 1.0f; t += 0.01f) {
 		float xPoint = 0.0f, yPoint = 0.0f;
 
 		for (int i = 0; i <= n; i++) {

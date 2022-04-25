@@ -43,43 +43,24 @@ int main() {
     // Specify the viewport of OpenGL in the Window
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
+    // Size of the points
     glPointSize(8);
-    /*appState.addVerticieToShape(-0.1f, 0.5f, 0.0f);
-    appState.addVerticieToShape(0.2f, 0.7f, 0.0f);
-    appState.addVerticieToShape(0.5f, 0.5f, 0.0f);
-    appState.addVerticieToShape(0.7f, 0.9f, 0.0f);
-
-    appState.addPointToVAO(GL_POINTS);
-
-    appState.computeBezierCurve(0);
-
-    appState.addVerticieToShape(-0.1f, -0.5f, 0.0f);
-    appState.addVerticieToShape(0.2f, -0.7f, 0.0f);
-    appState.addVerticieToShape(0.5f, -0.5f, 0.0f);
-    appState.addVerticieToShape(0.7f, -0.9f, 0.0f);
-
-    appState.addPointToVAO(GL_POINTS);
-
-    appState.computeBezierCurve(1);*/
 
     // Generates Shader object using shaders defualt.vert and default.frag
     Shader shaderProgram("default.vert", "default.frag");
     
     // Render loop
     while (!glfwWindowShouldClose(window)) {
-        // Keyboard and Mouse Input
-        //appState.processInput(window, SCR_HEIGHT, SCR_WIDTH);
-
         // Color of the background
         glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);  
 
         appState.drawCartesianPlane();
 
         // Tell OpenGL which Shader Program we want to use
         //shaderProgram.Activate();
         // Draw the shapes stored in the VAO
-        appState.drawFromPointVAO();
+        if(appState.drawPoints) appState.drawFromPointVAO();
         appState.drawFromCurveVAO();
         
         // Swap buffers and poll IO events
