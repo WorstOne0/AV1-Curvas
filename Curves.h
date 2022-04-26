@@ -18,21 +18,24 @@ public:
 	GLenum getType();
 
 	// Set Functions
-	void addVerticies(float x, float y, float z, float r, float b, float g);
+	void addVerticies(float x, float y, float z, float r, float g, float b);
 	void setType(GLenum type);
 	void clearData();
 };
 
 class State {
 private:
+	// One VAO and array for all the points and other for all the curvers (so its possible to show only the curves)
 	std::vector<VAO> pointVAO, curveVAO;
 	std::vector<Shape> Points, Curves;
+	// The shape that is being built
 	Shape newShape;
 
 public:
 	bool drawPoints = true, isMouse = true;
+
 	std::vector<float> colors = {
-		0.0f, 0.0f, 0.0f, // Black
+		//0.0f, 0.0f, 0.0f, // Black
 		1.0f, 1.0f, 1.0f, // White
 		0.482f, 0.803f, 0.729f,
 		0.607f, 0.494f, 0.870f,
@@ -50,7 +53,7 @@ public:
 	// Set Function
 	void addPointToVAO(GLenum type);
 	void addCurveToVAO(GLenum type);
-	void addVerticieToShape(float x, float y, float z, float r, float b, float g);
+	void addVerticieToShape(float x, float y, float z, float r, float g, float b);
 	void deleteVAOs();
 
 	// OpenGL functions

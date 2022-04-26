@@ -2,17 +2,16 @@
 #define VAO_CLASS_H
 
 #include <GL/glew.h>
-#include"VBO.h"
+#include "VBO.h"
 
-class VAO
-{
+class VAO {
 public:
 	// ID reference for the Vertex Array Object
 	GLuint ID;
 	// Constructor that generates a VAO ID
 	VAO();
 
-	// Links a VBO to the VAO using a certain layout
+	// Links a VBO to the VAO using a layout
 	void LinkAttrib(VBO& VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
 	// Binds the VAO
 	void Bind();

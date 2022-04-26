@@ -2,8 +2,7 @@
 #include <GL/glew.h>
 
 // Reads a text file and outputs a string with everything in the text file
-std::string get_file_contents(const char* filename)
-{
+std::string get_file_contents(const char* filename) {
 	std::ifstream in(filename, std::ios::binary);
 	if (in)
 	{
@@ -19,8 +18,7 @@ std::string get_file_contents(const char* filename)
 }
 
 // Constructor that build the Shader Program from 2 different shaders
-Shader::Shader(const char* vertexFile, const char* fragmentFile)
-{
+Shader::Shader(const char* vertexFile, const char* fragmentFile) {
 	// Read vertexFile and fragmentFile and store the strings
 	std::string vertexCode = get_file_contents(vertexFile);
 	std::string fragmentCode = get_file_contents(fragmentFile);
@@ -58,13 +56,11 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile)
 }
 
 // Activates the Shader Program
-void Shader::Activate()
-{
+void Shader::Activate() {
 	glUseProgram(ID);
 }
 
 // Deletes the Shader Program
-void Shader::Delete()
-{
+void Shader::Delete() {
 	glDeleteProgram(ID);
 }

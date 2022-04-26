@@ -11,7 +11,7 @@ GLenum Shape::getType() {
 	return this->type;
 }
 
-void Shape::addVerticies(float x, float y, float z, float r, float b, float g) {
+void Shape::addVerticies(float x, float y, float z, float r, float g, float b) {
 	// Verticies
 	this->verticies.push_back(x);
 	this->verticies.push_back(y);
@@ -42,6 +42,7 @@ std::vector<Shape> State::getCurves() {
 };
 
 void State::addPointToVAO(GLenum type) {
+	// Type to be drawn
 	this->newShape.setType(type);
 
 	// Generates Vertex Array Object and binds it
@@ -65,12 +66,15 @@ void State::addPointToVAO(GLenum type) {
 	VAO1.Unbind();
 	VBO1.Delete();
 
+	// Adds the shape to the array
 	this->Points.push_back(this->newShape);
+
 	// Resets the new shape
 	this->newShape.clearData();
 };
 
 void State::addCurveToVAO(GLenum type) {
+	// Type to be drawn
 	this->newShape.setType(type);
 
 	// Generates Vertex Array Object and binds it
@@ -94,12 +98,14 @@ void State::addCurveToVAO(GLenum type) {
 	VAO1.Unbind();
 	VBO1.Delete();
 
+	// Adds the shape to the array
 	this->Curves.push_back(this->newShape);
+
 	// Resets the new shape
 	this->newShape.clearData();
 };
 
-void State::addVerticieToShape(float x, float y, float z, float r, float b, float g) {
+void State::addVerticieToShape(float x, float y, float z, float r, float g, float b) {
 	this->newShape.addVerticies(x, y, z, r, g, b);
 };
 
@@ -126,13 +132,25 @@ void State::configureWindow(GLFWwindow* window) {
 void State::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	State* ptrState = static_cast<State*>(glfwGetWindowUserPointer(window));
 
+	// Swap between mouse and keyboard input
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
 		std::string frase = ptrState->isMouse ? "Teclado" : "Mouse";
 
+		// Swap
 		ptrState->isMouse = !ptrState->isMouse;
 		std::cout << "O Modo de input agora e pelo " << frase << std::endl;
 	}
 
+	// Swap between mouse and keyboard input
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+		std::string frase = ptrState->drawPoints ? "desativados" : "ativados";
+
+		// Swap
+		ptrState->drawPoints = !ptrState->drawPoints;
+		std::cout << "Os pontos foram " << frase << std::endl;
+	}
+
+	// Submits the points
 	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
 		// No points
 		if (ptrState->newShape.getVerticies().size() == 0) return;
@@ -155,7 +173,8 @@ void State::mouseButtonCallback(GLFWwindow* window, int button, int action, int 
 	State* ptrState = static_cast<State*>(glfwGetWindowUserPointer(window));
 
 	if (ptrState->isMouse) {
-		if (ptrState->Curves.size() == 9) {
+		// Max of 5 curves
+		if (ptrState->Curves.size() == 5) {
 			std::cout << "Limite maximo de curvas atingido" << std::endl;
 			return;
 		}
@@ -163,22 +182,33 @@ void State::mouseButtonCallback(GLFWwindow* window, int button, int action, int 
 		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 			int width, height;
 			double xpos = 0, ypos = 0;
+
+			// Get mouse position
 			glfwGetCursorPos(window, &xpos, &ypos);
+			// Get window size
 			glfwGetWindowSize(window, &width, &height);
 
+			// Convert to NDC coordinates
 			float x = -1.0f + 2 * xpos / width;
 			float y = +1.0f - 2 * ypos / height;
 
-			/*
-			if(ptrState->newShape.getVerticies().size() != 0) {
-				int index = (ptrState->newShape.getVerticies().size() / 6) - 1;
-				if (ptrState->newShape.getVerticies()[(6 * index)] == x && ptrState->newShape.getVerticies()[(6 * index) + 1] == y) {
+			// Max 9 points per curve
+			if ((ptrState->newShape.getVerticies().size() / 6) >= 9) {
+				std::cout << "Numero maximo d verticies atingido, aperte enter para enviar a curva" << std::endl;
+				return;
+			}
+
+			// No repeated points for the same curve
+			for (int i = 0; i < ptrState->newShape.getVerticies().size() / 6; i++) {
+				if (ptrState->newShape.getVerticies()[(6 * i)] == x && ptrState->newShape.getVerticies()[(6 * i) + 1] == y) {
 					std::cout << "O Ponto adiconado em (" << x << ", " << y << ") e repetido e sera descartado" << std::endl;
 					return;
 				}
-			}*/
+			}
 
 			std::cout << "Ponto adiconado em (" << x << ", " << y << ")" << std::endl;
+
+			// Add the verticies with a color to the shape
 			ptrState->addVerticieToShape(x, y, 0.0f, ptrState->colors[(3 * ptrState->Curves.size())], ptrState->colors[(3 * ptrState->Curves.size()) + 1], ptrState->colors[(3 * ptrState->Curves.size()) + 2]);
 		}
 	}
@@ -187,6 +217,7 @@ void State::mouseButtonCallback(GLFWwindow* window, int button, int action, int 
 void State::drawCartesianPlane() {
 	// Verticies
 	std::vector<float> vertices = {
+	//   POSITION      /       COLOR(Black)
 	1.0f, 0.0f, 0.0f,     0.0f, 0.0f, 0.0f, // Positive X-axis
 	-1.0f, 0.0f, 0.0f,    0.0f, 0.0f, 0.0f, // Negative X-axis
 	0.0f, 1.0f, 0.0f,     0.0f, 0.0f, 0.0f, // Positive Y-axis
@@ -288,7 +319,9 @@ void State::drawCartesianPlane() {
 }
 
 void State::drawFromPointVAO() {
+	// For each shape on the VAO
 	for (int i = 0; i < this->pointVAO.size(); i++) {
+		// Bind the VAO to know wicth points it should to draw
 		this->pointVAO[i].Bind();
 
 		glDrawArrays(this->Points[i].getType(), 0, this->Points[i].getVerticies().size() / 6);
@@ -299,7 +332,9 @@ void State::drawFromPointVAO() {
 }
 
 void State::drawFromCurveVAO() {
+	// For each shape on the VAO
 	for (int i = 0; i < this->curveVAO.size(); i++) {
+		// Bind the VAO to know wicth points it should to draw
 		this->curveVAO[i].Bind();
 
 		glDrawArrays(this->Curves[i].getType(), 0, this->Curves[i].getVerticies().size() / 6);
@@ -308,6 +343,7 @@ void State::drawFromCurveVAO() {
 	}
 }
 
+// Generate the points of a bezier curve
 void State::computeBezierCurve(int index) {
 	std::vector<float> bezierCurve;
 	
@@ -331,6 +367,7 @@ void State::computeBezierCurve(int index) {
 	}
 
 	for (int i = 0; i < bezierCurve.size() / 3; i++) {
+		// Add the verticies with a color to the shape
 		this->addVerticieToShape(bezierCurve[3 * i], bezierCurve[(3 * i) + 1], bezierCurve[(3 * i) + 2], this->colors[(3 * this->Curves.size())], this->colors[(3 * this->Curves.size()) + 1], this->colors[(3 * this->Curves.size()) + 2]);
 	}
 

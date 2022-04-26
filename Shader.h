@@ -11,8 +11,7 @@
 
 std::string get_file_contents(const char* filename);
 
-class Shader
-{
+class Shader {
 public:
 	// Reference ID of the Shader Program
 	GLuint ID;

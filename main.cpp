@@ -35,6 +35,7 @@ int main() {
     }
     glfwMakeContextCurrent(window);
 
+    // Makes possible for the callbacks functions be inside the class
     appState.configureWindow(window);
     
     // Initialize GLEW
@@ -53,14 +54,17 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         // Color of the background
         glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);  
-
-        appState.drawCartesianPlane();
+        glClear(GL_COLOR_BUFFER_BIT);
 
         // Tell OpenGL which Shader Program we want to use
         shaderProgram.Activate();
-        // Draw the shapes stored in the VAO
+
+        // Draw the cartesian plan
+        appState.drawCartesianPlane();
+
+        // Draw the points stored in the VAO
         if(appState.drawPoints) appState.drawFromPointVAO();
+        // Draw the curves stored in the VAO
         appState.drawFromCurveVAO();
         
         // Swap buffers and poll IO events
@@ -78,26 +82,6 @@ int main() {
     glfwTerminate();
     return 0;
 }
-
-/*void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
-        std::cout << "Enter" << std::endl;
-
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
-
-void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        int width, height;
-        double xpos = 0, ypos = 0;
-        glfwGetCursorPos(window, &xpos, &ypos);
-        glfwGetWindowSize(window, &width, &height);
-
-        float x = -1.0f + 2 * xpos / width;
-        float y = +1.0f - 2 * ypos / height;
-    }
-}*/
 
 // Resize window
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
