@@ -134,11 +134,19 @@ void State::keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 
 	// Swap between mouse and keyboard input
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		std::string frase = ptrState->isMouse ? "Teclado" : "Mouse";
+		std::string frase = ptrState->isMouse ? "Teclado. Tecle I para ativar a digitalizacao no console \n" : "Mouse \n";
 
 		// Swap
 		ptrState->isMouse = !ptrState->isMouse;
 		std::cout << "O Modo de input agora e pelo " << frase << std::endl;
+	}
+
+	if (!ptrState->isMouse) {
+		if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+			ptrState->isConsole = true;
+
+			std::cout << "A tela esta travada enquanto o modo de digitacao pelo console esta ativo, selecione o console" << std::endl;
+		}
 	}
 
 	// Swap between mouse and keyboard input
@@ -151,22 +159,52 @@ void State::keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 	}
 
 	// Submits the points
-	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
-		// No points
-		if (ptrState->newShape.getVerticies().size() == 0) return;
+	if (!ptrState->isConsole) {
+		if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+			// No points
+			if (ptrState->newShape.getVerticies().size() == 0) return;
 
-		// Min 3 points
-		if ((ptrState->newShape.getVerticies().size() / 6) < 3) {
-			std::cout << "Essa funcao precisa(na verdade nao precisa mais e o que ta sendo pedido) de 3 pontos";
-			return;
+			// Min 3 points
+			if ((ptrState->newShape.getVerticies().size() / 6) < 3) {
+				std::cout << "Essa funcao precisa(na verdade nao precisa mais e o que ta sendo pedido) de 3 pontos";
+				return;
+			}
+
+			ptrState->addPointToVAO(GL_POINTS);
+			ptrState->computeBezierCurve(ptrState->Curves.size());
 		}
-
-		ptrState->addPointToVAO(GL_POINTS);
-		ptrState->computeBezierCurve(ptrState->Curves.size());
 	}
 		
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+}
+
+void State::getFromConsole() {
+	std::string a;
+	std::cout << "Digite o " << (this->newShape.getVerticies().size() / 6) + 1 << " verticie" << std::endl;
+
+	std::cout << "X: ";
+	std::cin >> a;
+	float x = std::stof(a);
+
+	std::cout << "Y: ";
+	std::cin >> a;
+	float y = std::stof(a);
+
+	// Add the verticies with a color to the shape
+	this->addVerticieToShape(x, y, 0.0f, this->colors[(3 * this->Curves.size())], this->colors[(3 * this->Curves.size()) + 1], this->colors[(3 * this->Curves.size()) + 2]);
+
+	std::cout << "Digite no console 'q' para sair. Digite 'i' pra continuar" << std::endl;
+	std::cin >> a;
+
+	if (a == "q") {
+		this->isConsole = false;
+
+		this->addPointToVAO(GL_POINTS);
+		this->computeBezierCurve(this->Curves.size());
+
+		std::cout << "O modo de input pelo console terminou, selecione novamente a tela" << std::endl;
+	}
 }
 
 void State::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {

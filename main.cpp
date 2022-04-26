@@ -49,6 +49,9 @@ int main() {
 
     // Generates Shader object using shaders defualt.vert and default.frag
     Shader shaderProgram("default.vert", "default.frag");
+
+    std::cout << "O modo de input padrao e pelo mouse, cada clique na tela gera um ponto" << std::endl;
+    std::cout << "A tecla enter insere uma nova curva" << "\n\n";
     
     // Render loop
     while (!glfwWindowShouldClose(window)) {
@@ -61,6 +64,9 @@ int main() {
 
         // Draw the cartesian plan
         appState.drawCartesianPlane();
+
+        // Get the input from console when
+        if (appState.isConsole) appState.getFromConsole();
 
         // Draw the points stored in the VAO
         if(appState.drawPoints) appState.drawFromPointVAO();

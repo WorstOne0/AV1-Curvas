@@ -32,7 +32,7 @@ private:
 	Shape newShape;
 
 public:
-	bool drawPoints = true, isMouse = true;
+	bool drawPoints = true, isMouse = true, isConsole = false;
 
 	std::vector<float> colors = {
 		//0.0f, 0.0f, 0.0f, // Black
@@ -59,6 +59,7 @@ public:
 	// OpenGL functions
 	void configureWindow(GLFWwindow* window);
 	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	void getFromConsole();
 	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 	void drawCartesianPlane();
 	void drawFromPointVAO();
