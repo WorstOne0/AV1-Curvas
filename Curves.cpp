@@ -1,6 +1,7 @@
 #include "Curves.h"
 
 float computeBinominal(int n, int k);
+double blend(std::vector<float>& uVec, double t, int k, int d);
 
 // Form Class
 std::vector<float> Shape::getVerticies() {
@@ -172,6 +173,7 @@ void State::keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 
 			ptrState->addPointToVAO(GL_POINTS);
 			ptrState->computeBezierCurve(ptrState->Curves.size());
+			// ptrState->computeBSpline(ptrState->Curves.size());
 		}
 	}
 		
@@ -191,13 +193,28 @@ void State::getFromConsole() {
 	std::cin >> a;
 	float y = std::stof(a);
 
+	// NDC
+	if ((x > 1.0f || y > 1.0f) || (x < -1.0f || y < -1.0f)) {
+		std::cout << "O Ponto adiconado em (" << x << ", " << y << ") e invalido e sera descartado" << std::endl;
+		return;
+	}
+
+	// No repeated points for the same curve
+	for (int i = 0; i < this->newShape.getVerticies().size() / 6; i++) {
+		if (this->newShape.getVerticies()[(6 * i)] == x && this->newShape.getVerticies()[(6 * i) + 1] == y) {
+			std::cout << "O Ponto adiconado em (" << x << ", " << y << ") e repetido e sera descartado" << std::endl;
+			return;
+		}
+	}
+
 	// Add the verticies with a color to the shape
 	this->addVerticieToShape(x, y, 0.0f, this->colors[(3 * this->Curves.size())], this->colors[(3 * this->Curves.size()) + 1], this->colors[(3 * this->Curves.size()) + 2]);
 
 	std::cout << "Digite no console 'q' para sair. Digite 'i' pra continuar" << std::endl;
 	std::cin >> a;
 
-	if (a == "q") {
+	// Max 9 points or user finished inserting
+	if (a == "q" || (this->newShape.getVerticies().size() / 6) >= 9) {
 		this->isConsole = false;
 
 		this->addPointToVAO(GL_POINTS);
@@ -428,4 +445,50 @@ float computeBinominal(int n, int k) {
 	}
 
 	return value;
+}
+
+void State::computeBSpline(int index) {
+	std::vector<float> curve, uVec;
+
+	int n = (this->Points[index].getVerticies().size() / 6), d = 15;
+
+	for (int i = 0; i < n + d; i++) {
+		uVec.push_back(((float)i) / (n + d - 1));
+	}
+
+	for (float t = 0.0f; t < 1.0f; t += 0.1f) {
+		float xPoint = 0.0f, yPoint = 0.0f;
+
+		for (int i = 0; i < n - 1; i++) {
+			xPoint += blend(uVec, t, i, d) * this->Points[index].getVerticies()[6 * i];
+			yPoint += blend(uVec, t, i, d) * this->Points[index].getVerticies()[(6 * i) + 1];
+		}
+
+		curve.push_back(xPoint);
+		curve.push_back(yPoint);
+		curve.push_back(0.0f);
+	}
+
+	for (int i = 0; i < curve.size() / 3; i++) {
+		// Add the verticies with a color to the shape
+		this->addVerticieToShape(curve[3 * i], curve[(3 * i) + 1], curve[(3 * i) + 2], this->colors[(3 * this->Curves.size())], this->colors[(3 * this->Curves.size()) + 1], this->colors[(3 * this->Curves.size()) + 2]);
+	}
+
+	this->addCurveToVAO(GL_LINE_STRIP);
+
+	curve.clear();
+}
+
+double blend(std::vector<float>& uVec, double t, int k, int d) {
+	if (d == 1) {
+		if (uVec[k] <= t && t < uVec[k + 1])
+			return 1;
+		return 0;
+	}
+
+	double b;
+
+	b = ((t - uVec[k]) / (uVec[k + d - 1] - uVec[k]) * blend(uVec, t, k, d - 1)) + ((uVec[k + d] - t) / (uVec[k + d] - uVec[k + 1]) * blend(uVec, t, k + 1, d - 1));
+	
+	return b;
 }

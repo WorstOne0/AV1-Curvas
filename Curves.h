@@ -39,7 +39,6 @@ public:
 		1.0f, 1.0f, 1.0f, // White
 		0.482f, 0.803f, 0.729f,
 		0.607f, 0.494f, 0.870f,
-		0.611f, 0.686f, 0.717f,
 		0.309f, 0.615f, 0.411f,
 		0.976f, 0.439f, 0.407f,
 		0.819f, 0.839f, 0.274f,
@@ -65,6 +64,7 @@ public:
 	void drawFromPointVAO();
 	void drawFromCurveVAO();
 	void computeBezierCurve(int index);
+	void computeBSpline(int index);
 };
 
 /*

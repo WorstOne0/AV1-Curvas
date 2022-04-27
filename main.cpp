@@ -52,6 +52,10 @@ int main() {
 
     std::cout << "O modo de input padrao e pelo mouse, cada clique na tela gera um ponto" << std::endl;
     std::cout << "A tecla enter insere uma nova curva" << "\n\n";
+
+    std::cout << "A tecla P adiciona/remove os pontos" << std::endl;
+    std::cout << "A tecla S liga/desliga o input pelo mouse/teclado" << std::endl;
+    std::cout << "Quando o input e pelo teclado a tecla I inicia a digitacao pelo console" << std::endl;
     
     // Render loop
     while (!glfwWindowShouldClose(window)) {
@@ -69,7 +73,7 @@ int main() {
         if (appState.isConsole) appState.getFromConsole();
 
         // Draw the points stored in the VAO
-        if(appState.drawPoints) appState.drawFromPointVAO();
+        if (appState.drawPoints) appState.drawFromPointVAO();
         // Draw the curves stored in the VAO
         appState.drawFromCurveVAO();
         
